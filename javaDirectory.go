@@ -1,7 +1,5 @@
 package main
 
-import "os"
-
-func CreateJavaDir([]os.File) {
+func CreateJavaDir(files KotlinFiles) {
 
 }
