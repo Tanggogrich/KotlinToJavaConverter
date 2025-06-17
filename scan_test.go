@@ -41,10 +41,10 @@ func createTestDir(t *testing.T, files map[string]string) string {
 	return tmpDir
 }
 
-// compareKotlinFiles is a helper to compare two slices of KotlinFile structs.
+// compareKotlinFiles is a helper to compare two slices of DataFile structs.
 // It normalizes paths to be relative to the test directory for consistent comparison
 // and ignores the order of files.
-func compareKotlinFiles(t *testing.T, got, want []KotlinFile, baseDir string) {
+func compareKotlinFiles(t *testing.T, got, want []DataFile, baseDir string) {
 	// If lengths don't match, they are definitely different
 	if len(got) != len(want) {
 		t.Errorf("Expected %d files, got %d", len(want), len(got))
@@ -114,7 +114,7 @@ func TestScanSingleLevel(t *testing.T) {
 	tmpDir := createTestDir(t, files)
 	defer os.RemoveAll(tmpDir)
 
-	expectedFiles := []KotlinFile{
+	expectedFiles := []DataFile{
 		{Name: "MyClass.kt", Content: []byte("package com.example\nclass MyClass {}")},
 		{Name: "AnotherFile.kt", Content: []byte("fun doSomething() {}")},
 	}
@@ -124,7 +124,7 @@ func TestScanSingleLevel(t *testing.T) {
 		t.Fatalf("Scan failed: %v", err)
 	}
 
-	// Because your `KotlinFile` struct's `Name` field stores only the base name,
+	// Because your `DataFile` struct's `Name` field stores only the base name,
 	// and your `ScanFolders` recursive call has an issue (see important note below),
 	// this test is designed for a single flat directory scan.
 	// For nested directory tests, the current `ScanFolders` implementation would not work as expected.
@@ -147,7 +147,7 @@ func TestScanNestedFolders(t *testing.T) {
 	// The `ScanFolders` recursive call passes the *same* 'folder' argument
 	// instead of the path to the sub-directory.
 	// Expected files assuming the bug IS fixed and it scans recursively:
-	expectedFiles := []KotlinFile{
+	expectedFiles := []DataFile{
 		{Name: "App.kt", Content: []byte("fun main() {}")},
 		{Name: "Helper.kt", Content: []byte("class Helper {}")},
 		{Name: "TestApp.kt", Content: []byte("import org.junit.Test")},
@@ -163,8 +163,8 @@ func TestScanNestedFolders(t *testing.T) {
 		t.Fatalf("Scan failed: %v", err)
 	}
 
-	// We use the `expectedFiles` with base names here because your `KotlinFile` stores `Name`, not `Path`.
-	// If `KotlinFile` stored `Path`, the `expectedFiles` would need full relative paths like "src/main/App.kt".
+	// We use the `expectedFiles` with base names here because your `DataFile` stores `Name`, not `Path`.
+	// If `DataFile` stored `Path`, the `expectedFiles` would need full relative paths like "src/main/App.kt".
 	// The `compareKotlinFiles` helper tries to account for this by normalizing.
 	compareKotlinFiles(t, kotlinFiles.Files, expectedFiles, tmpDir)
 

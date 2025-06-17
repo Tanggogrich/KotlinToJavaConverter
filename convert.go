@@ -6,9 +6,13 @@ func Convert(folder string) {
 		After it creates a lexical tree that will be converted into java code.
 		Return a list of java files.
 	*/
-	var javaFolders, _ = Scan(folder)
+	var files, err = Scan(folder)
+	if err != nil {
+		panic(err)
+	}
+	err = Compile(files)
 	/*
 		Create the new directory for Java files and write them inside new directory.
 	*/
-	CreateJavaDir(javaFolders)
+	CreateJavaDir(files)
 }

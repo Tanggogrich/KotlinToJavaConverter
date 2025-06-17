@@ -7,26 +7,30 @@ import (
 	"strings"
 )
 
-type KotlinFile struct {
+// DataFile describes the simple structure of found .kt-file,
+// that consists the filename and raw code as a content
+type DataFile struct {
 	Name    string
 	Content []byte
 }
 
-type KotlinFiles struct {
-	Files []KotlinFile
+type DataFiles struct {
+	Files []DataFile
 }
 
-func Scan(folder string) (KotlinFiles, error) {
+// Scan function takes the folder name, and recursively goes through the directory, and also its subdirectories
+// return a list of all found kotlin files
+func Scan(folder string) (DataFiles, error) {
 	var files, err = RecursiveScanFolder(folder)
 	return files, err
 }
 
-func RecursiveScanFolder(folder string) (KotlinFiles, error) {
-	result := KotlinFiles{}
+func RecursiveScanFolder(folder string) (DataFiles, error) {
+	result := DataFiles{}
 	return ScanFolders(&result, folder)
 }
 
-func ScanFolders(result *KotlinFiles, folder string) (KotlinFiles, error) {
+func ScanFolders(result *DataFiles, folder string) (DataFiles, error) {
 	f, err := os.Open(folder)
 	if err != nil {
 		return *result, fmt.Errorf("the folder %s cannot be opened", folder)
@@ -47,7 +51,7 @@ func ScanFolders(result *KotlinFiles, folder string) (KotlinFiles, error) {
 			if readErr != nil {
 				return *result, fmt.Errorf("the file %s cannot be read", file.Name())
 			}
-			result.Files = append(result.Files, KotlinFile{
+			result.Files = append(result.Files, DataFile{
 				Name:    file.Name(),
 				Content: contentBytes,
 			})

@@ -1,5 +1,5 @@
 package main
 
-func CreateJavaDir(files KotlinFiles) {
+func CreateJavaDir(files DataFiles) {
 
 }
