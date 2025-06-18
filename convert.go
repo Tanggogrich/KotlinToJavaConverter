@@ -1,5 +1,9 @@
 package main
 
+import (
+	"KotlinToJavaConverter/compiler"
+)
+
 func Convert(folder string) {
 	/*
 		Scan method takes the folder and scans each .kt files until the end.
@@ -10,7 +14,7 @@ func Convert(folder string) {
 	if err != nil {
 		panic(err)
 	}
-	err = Compile(files)
+	err = compiler.Compile(files)
 	/*
 		Create the new directory for Java files and write them inside new directory.
 	*/

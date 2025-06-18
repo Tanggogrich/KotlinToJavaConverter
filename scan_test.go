@@ -1,6 +1,7 @@
 package main
 
 import (
+	"KotlinToJavaConverter/structures"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -44,7 +45,7 @@ func createTestDir(t *testing.T, files map[string]string) string {
 // compareKotlinFiles is a helper to compare two slices of DataFile structs.
 // It normalizes paths to be relative to the test directory for consistent comparison
 // and ignores the order of files.
-func compareKotlinFiles(t *testing.T, got, want []DataFile, baseDir string) {
+func compareKotlinFiles(t *testing.T, got, want []structures.DataFile, baseDir string) {
 	// If lengths don't match, they are definitely different
 	if len(got) != len(want) {
 		t.Errorf("Expected %d files, got %d", len(want), len(got))
@@ -114,7 +115,7 @@ func TestScanSingleLevel(t *testing.T) {
 	tmpDir := createTestDir(t, files)
 	defer os.RemoveAll(tmpDir)
 
-	expectedFiles := []DataFile{
+	expectedFiles := []structures.DataFile{
 		{Name: "MyClass.kt", Content: []byte("package com.example\nclass MyClass {}")},
 		{Name: "AnotherFile.kt", Content: []byte("fun doSomething() {}")},
 	}
@@ -147,7 +148,7 @@ func TestScanNestedFolders(t *testing.T) {
 	// The `ScanFolders` recursive call passes the *same* 'folder' argument
 	// instead of the path to the sub-directory.
 	// Expected files assuming the bug IS fixed and it scans recursively:
-	expectedFiles := []DataFile{
+	expectedFiles := []structures.DataFile{
 		{Name: "App.kt", Content: []byte("fun main() {}")},
 		{Name: "Helper.kt", Content: []byte("class Helper {}")},
 		{Name: "TestApp.kt", Content: []byte("import org.junit.Test")},

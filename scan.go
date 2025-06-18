@@ -1,36 +1,26 @@
 package main
 
 import (
+	"KotlinToJavaConverter/structures"
 	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 )
 
-// DataFile describes the simple structure of found .kt-file,
-// that consists the filename and raw code as a content
-type DataFile struct {
-	Name    string
-	Content []byte
-}
-
-type DataFiles struct {
-	Files []DataFile
-}
-
 // Scan function takes the folder name, and recursively goes through the directory, and also its subdirectories
 // return a list of all found kotlin files
-func Scan(folder string) (DataFiles, error) {
+func Scan(folder string) (structures.DataFiles, error) {
 	var files, err = RecursiveScanFolder(folder)
 	return files, err
 }
 
-func RecursiveScanFolder(folder string) (DataFiles, error) {
-	result := DataFiles{}
+func RecursiveScanFolder(folder string) (structures.DataFiles, error) {
+	result := structures.DataFiles{}
 	return ScanFolders(&result, folder)
 }
 
-func ScanFolders(result *DataFiles, folder string) (DataFiles, error) {
+func ScanFolders(result *structures.DataFiles, folder string) (structures.DataFiles, error) {
 	f, err := os.Open(folder)
 	if err != nil {
 		return *result, fmt.Errorf("the folder %s cannot be opened", folder)
@@ -51,7 +41,7 @@ func ScanFolders(result *DataFiles, folder string) (DataFiles, error) {
 			if readErr != nil {
 				return *result, fmt.Errorf("the file %s cannot be read", file.Name())
 			}
-			result.Files = append(result.Files, DataFile{
+			result.Files = append(result.Files, structures.DataFile{
 				Name:    file.Name(),
 				Content: contentBytes,
 			})

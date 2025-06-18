@@ -1,8 +1,11 @@
-package main
+package compiler
 
-import "fmt"
+import (
+	"KotlinToJavaConverter/structures"
+	"fmt"
+)
 
-type Token struct {
+type Item struct {
 }
 
 // Node are pointers types to what
@@ -33,8 +36,8 @@ type TreeAST Node
 // Compile function takes a list of all kotlin files and analyze
 // the correctness of file's content. The compiler consists of four steps:
 // tokenization, parsing, transformation, converter
-func Compile(files DataFiles) error {
-	javaFiles := DataFiles{}
+func Compile(files structures.DataFiles) error {
+	javaFiles := structures.DataFiles{}
 	for _, file := range files.Files {
 
 		tokens, err := Tokenization(file)
@@ -63,11 +66,11 @@ func Compile(files DataFiles) error {
 
 //TODO: continue implement the "Compile" function with support services
 
-func Tokenization(file DataFile) ([]Token, error) {
-	return make([]Token, 0), nil
+func Tokenization(file structures.DataFile) ([]Item, error) {
+	return make([]Item, 0), nil
 }
 
-func Parser(tokens []Token) (TreeAST, error) {
+func Parser(tokens []Item) (TreeAST, error) {
 	return TreeAST{}, nil
 }
 
@@ -75,6 +78,6 @@ func Transformation(oldTreeAST TreeAST) (TreeAST, error) {
 	return oldTreeAST, nil
 }
 
-func Converter(newTreeAST TreeAST) (DataFile, error) {
-	return DataFile{}, nil
+func Converter(newTreeAST TreeAST) (structures.DataFile, error) {
+	return structures.DataFile{}, nil
 }

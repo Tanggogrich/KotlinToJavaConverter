@@ -1,5 +1,7 @@
 package main
 
-func CreateJavaDir(files DataFiles) {
+import "KotlinToJavaConverter/structures"
+
+func CreateJavaDir(files structures.DataFiles) {
 
 }
