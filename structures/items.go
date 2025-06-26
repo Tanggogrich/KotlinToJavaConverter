@@ -32,40 +32,57 @@ func (i Item) ToString() string {
 type ItemType int
 
 const (
-	ItemError        ItemType = iota // error occurred; value is text of error
-	ItemBool                         // boolean constant
-	ItemChar                         // printable ASCII character; grab bag for comma etc.
-	ItemCharConstant                 // character constant
-	ItemComment                      // comment text
-	ItemComplex                      // complex constant (1+2i); imaginary is just a number
-	ItemAssign                       // equals ('=') introducing an assignment
-	ItemDeclare                      // colon-equals (':=') introducing a declaration
+	ItemError      ItemType = iota // error occurred; value is text of error
+	ItemArithmetic                 // arithmetic symbols
+	ItemColon                      // colon keyword
+	ItemSemicolon                  // semicolon (optional)
+	ItemComment                    // comment text
+	ItemCompare                    // compare symbols
+	ItemAssign                     // equals ('=') introducing an assignment
+	ItemDot                        // dot
 	ItemEOF
+	ItemLogical    // and '&&', or '||', not '!'
 	ItemField      // alphanumeric identifier starting with '.'
 	ItemIdentifier // alphanumeric identifier not starting with '.'
 	ItemLeftDelim  // left action delimiter
 	ItemLeftParen  // '(' inside action
 	ItemNumber     // simple number, including imaginary
-	ItemPipe       // pipe symbol
 	ItemRawString  // raw quoted string (includes quotes)
 	ItemRightDelim // right action delimiter
 	ItemRightParen // ')' inside action
 	ItemSpace      // run of spaces separating arguments
-	ItemString     // quoted string (includes quotes)
-	ItemText       // plain text
-	ItemVariable   // variable starting with '$', such as '$' or  '$1' or '$hello'
+
+	// literals appear after
+	ItemLiteral
+	ItemBoolean      // boolean constant
+	ItemInteger      // integer numbers
+	ItemFloat        // floating point numbers
+	ItemChar         // printable ASCII character; grab bag for comma etc.
+	ItemCharConstant // escape sequences e.g. '\n'
+	ItemString       // quoted string (includes quotes)
+	ItemText         // plain text
+	ItemNull         // the untyped null constant, easiest to treat as a keyword
+
 	// keywords appear after all the rest.
-	ItemKeyword  // used only to delimit the keywords
-	ItemBlock    // block keyword
-	ItemBreak    // break keyword
-	ItemContinue // continue keyword
-	ItemDot      // the cursor, spelled '.'
-	ItemDefine   // define keyword
-	ItemElse     // else keyword
-	ItemEnd      // end keyword
-	ItemIf       // if keyword
-	ItemNil      // the untyped nil constant, easiest to treat as a keyword
-	ItemRange    // range keyword
-	ItemTemplate // template keyword
-	ItemWith     // with keyword
+	ItemKeyword
+	ItemBreak     // break keyword
+	ItemClass     // class keyword
+	ItemContinue  // continue keyword
+	ItemDo        // do keyword
+	ItemDefine    // define keyword
+	ItemElse      // else keyword
+	ItemFor       // for loop keyword
+	ItemIf        // if keyword
+	ItemInterface // interface keyword
+	ItemPackage   // package keyword
+	ItemRange     // range keyword 'in'
+	ItemThrow     // throw keyword
+	ItemFunction  // function keyword 'fun'
+	ItemWhile     // while loop keyword
+	ItemReturn    // return call keyword
+	ItemSuper     // super keyword
+	ItemVariable  // variable keyword 'var'
+	ItemConstant  // constant variable keyword 'val'
+	ItemTry       // try keyword
+	ItemTypeof    // typeof keyword
 )
