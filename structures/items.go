@@ -8,10 +8,22 @@ type Pos int
 
 // Item represents a token or text string returned from the scanner.
 type Item struct {
-	Typ  ItemType // The type of this Item.
-	Pos  Pos      // The starting position, in bytes, of this Item in the input string.
-	Val  string   // The value of this Item.
-	Line int      // The line number at the start of this Item.
+	Typ ItemType // The type of this Item.
+	Val string   // The value of this Item.
+}
+
+type IdentifierType int
+
+const (
+	idError IdentifierType = iota
+	idUndefined
+	idFunction
+	idVariable
+)
+
+type Identifier struct {
+	typ IdentifierType
+	val string
 }
 
 func (i Item) ToString() string {
@@ -32,14 +44,14 @@ func (i Item) ToString() string {
 type ItemType int
 
 const (
-	ItemError      ItemType = iota // error occurred; value is text of error
-	ItemArithmetic                 // arithmetic symbols
-	ItemColon                      // colon keyword
-	ItemSemicolon                  // semicolon (optional)
-	ItemComment                    // comment text
-	ItemCompare                    // compare symbols
-	ItemAssign                     // equals ('=') introducing an assignment
-	ItemDot                        // dot
+	ItemError     ItemType = iota // error occurred; value is text of error
+	ItemNumeric                   // arithmetic symbols
+	ItemColon                     // colon keyword
+	ItemSemicolon                 // semicolon (optional)
+	ItemComment                   // comment text
+	ItemCompare                   // compare symbols
+	ItemAssign                    // equals ('=') introducing an assignment
+	ItemDot                       // dot
 	ItemEOF
 	ItemLogical    // and '&&', or '||', not '!'
 	ItemField      // alphanumeric identifier starting with '.'

@@ -5,9 +5,6 @@ import (
 	"fmt"
 )
 
-type Item struct {
-}
-
 // Node are pointers types to what
 // would otherwise be recursive types in Go. e.g.
 //
@@ -66,11 +63,11 @@ func Compile(files structures.DataFiles) error {
 
 //TODO: continue implement the "Compile" function with support services
 
-func Tokenization(file structures.DataFile) ([]Item, error) {
-	return make([]Item, 0), nil
+func Tokenization(file structures.DataFile) ([]structures.Item, error) {
+	return make([]structures.Item, 0), nil
 }
 
-func Parser(tokens []Item) (TreeAST, error) {
+func Parser(tokens []structures.Item) (TreeAST, error) {
 	return TreeAST{}, nil
 }
 
