@@ -10,6 +10,7 @@ type Pos int
 type Item struct {
 	Typ ItemType // The type of this Item.
 	Val string   // The value of this Item.
+	Pos int      // The starting position of the item in the input string.
 }
 
 type IdentifierType int
@@ -56,11 +57,11 @@ const (
 	ItemLogical    // and '&&', or '||', not '!'
 	ItemField      // alphanumeric identifier starting with '.'
 	ItemIdentifier // alphanumeric identifier not starting with '.'
-	ItemLeftDelim  // left action delimiter
+	ItemLeftBrace  // {
 	ItemLeftParen  // '(' inside action
 	ItemNumber     // simple number, including imaginary
 	ItemRawString  // raw quoted string (includes quotes)
-	ItemRightDelim // right action delimiter
+	ItemRightBrace // }
 	ItemRightParen // ')' inside action
 	ItemSpace      // run of spaces separating arguments
 

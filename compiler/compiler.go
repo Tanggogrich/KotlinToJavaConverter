@@ -1,40 +1,32 @@
 package compiler
 
 import (
-	"KotlinToJavaConverter/structures"
+	st "KotlinToJavaConverter/structures"
 	"fmt"
+	"strings"
+	"unicode/utf8"
 )
 
-// Node are pointers types to what
-// would otherwise be recursive types in Go. e.g.
-//
-// callee Node
-//
-// Would cause the Go compiler to complain about a recursive type. When we want
-// to use one of these types to pass through to a function, for example, we'd
-// use `&` as it'd be a reference. But we'll come to that a bit later on.
-type Node struct {
-	kind       string
-	value      string
-	name       string
-	callee     *Node
-	expression *Node
-	body       []Node
-	params     []Node
-	arguments  *[]Node
-	context    *[]Node
+const eof = -1 // end of the file marker
+
+// Lexer holds the state of the scanner.
+type Lexer struct {
+	Name  string       // used only for error reports
+	Input string       // the string being scanned
+	Start int          // start pos of this Item
+	Pos   int          // current pos in input
+	Width int          // width of last rune read
+	Items chan st.Item // channel of scanned Item
 }
 
-// TreeAST is just another alias type. I find this makes part of the code
-// more readable, as you'll come to see that there are a ton of references to
-// `Node`.
-type TreeAST Node
+// stateFn represents the state of the scanner as a function that returns the next state.
+type stateFn func(*Lexer) stateFn
 
 // Compile function takes a list of all kotlin files and analyze
 // the correctness of file's content. The compiler consists of four steps:
 // tokenization, parsing, transformation, converter
-func Compile(files structures.DataFiles) error {
-	javaFiles := structures.DataFiles{}
+func Compile(files st.DataFiles) error {
+	javaFiles := st.DataFiles{}
 	for _, file := range files.Files {
 
 		tokens, err := Tokenization(file)
@@ -63,11 +55,33 @@ func Compile(files structures.DataFiles) error {
 
 //TODO: continue implement the "Compile" function with support services
 
-func Tokenization(file structures.DataFile) ([]structures.Item, error) {
-	return make([]structures.Item, 0), nil
+// Tokenization reads the file's content and translates it into a slice of Items.
+func Tokenization(file st.DataFile) ([]st.Item, error) {
+	l := &Lexer{
+		Input: string(file.Content),
+		Items: make(chan st.Item),
+	}
+	go l.Run() // Run the lexer in a goroutine
+
+	var tokens []st.Item
+	for {
+		item := <-l.Items
+		tokens = append(tokens, item)
+		if item.Typ == st.ItemEOF || item.Typ == st.ItemError {
+			break
+		}
+	}
+
+	if tokens[len(tokens)-1].Typ != st.ItemEOF {
+		return nil, fmt.Errorf("lexing error: %s at position %d", tokens[len(tokens)-1].Val, tokens[len(tokens)-1].Pos)
+	}
+	return tokens, nil
 }
 
-func Parser(tokens []structures.Item) (TreeAST, error) {
+type TreeAST struct {
+}
+
+func Parser(tokens []st.Item) (TreeAST, error) {
 	return TreeAST{}, nil
 }
 
@@ -75,6 +89,44 @@ func Transformation(oldTreeAST TreeAST) (TreeAST, error) {
 	return oldTreeAST, nil
 }
 
-func Converter(newTreeAST TreeAST) (structures.DataFile, error) {
-	return structures.DataFile{}, nil
+func Converter(newTreeAST TreeAST) (st.DataFile, error) {
+	return st.DataFile{}, nil
+}
+
+// Lexer support functions //
+
+// Run lexes the input by executing state functions until the state is nil.
+func (l *Lexer) Run() {
+	for state := LexText; state != nil; {
+		state = state(l)
+	}
+	close(l.Items) // No more tokens will be delivered
+}
+
+// Emit passes an item back to the client.
+func (l *Lexer) Emit(t st.ItemType) {
+	l.Items <- st.Item{Typ: t, Val: l.Input[l.Start:l.Pos], Pos: l.Start}
+	l.Start = l.Pos
+}
+
+func (l *Lexer) Next() rune {
+	if l.Pos >= len(l.Input) {
+		l.Width = 0
+		return eof
+	}
+	r, w := utf8.DecodeRuneInString(l.Input[l.Pos:])
+	l.Width += w
+	l.Pos += l.Width
+	return r
+}
+
+func LexText(l *Lexer) stateFn {
+	for {
+		if strings.HasPrefix(l.Input[l.Pos:], "{") {
+			if l.Pos > l.Start {
+				l.Emit(st.ItemText)
+			}
+			//return lexLeftMeta
+		}
+	}
 }
